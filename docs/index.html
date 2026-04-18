@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Employee Burnout Prediction — ME 231 Final Project</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0f1117;
+      --surface: #1a1d27;
+      --surface2: #22263a;
+      --border: #2e3350;
+      --accent: #4f8ef7;
+      --accent2: #34d399;
+      --accent3: #f97316;
+      --accent4: #a78bfa;
+      --warn: #facc15;
+      --text: #e2e8f0;
+      --muted: #8892a4;
+      --radius: 12px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      line-height: 1.6;
+    }
+
+    /* NAV */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(15,17,23,.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      display: flex; align-items: center; gap: 2rem;
+      height: 56px;
+    }
+    .nav-brand { font-weight: 700; font-size: 1rem; color: var(--accent); white-space: nowrap; }
+    .nav-links { display: flex; gap: 1.5rem; list-style: none; overflow-x: auto; }
+    .nav-links a { color: var(--muted); text-decoration: none; font-size: .875rem; white-space: nowrap; transition: color .2s; }
+    .nav-links a:hover { color: var(--text); }
+
+    /* HERO */
+    .hero {
+      background: linear-gradient(135deg, #0f1117 0%, #1a1d27 40%, #0e1a2e 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 5rem 2rem 4rem;
+      text-align: center;
+      position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 70% 50% at 50% 0%, rgba(79,142,247,.12) 0%, transparent 70%);
+    }
+    .hero-tag {
+      display: inline-block;
+      background: rgba(79,142,247,.15);
+      border: 1px solid rgba(79,142,247,.4);
+      color: var(--accent);
+      font-size: .75rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
+      padding: .3rem .8rem; border-radius: 999px; margin-bottom: 1.25rem;
+    }
+    h1 { font-size: clamp(2rem, 5vw, 3.25rem); font-weight: 800; line-height: 1.15; margin-bottom: 1rem; }
+    h1 span { color: var(--accent); }
+    .hero-sub { font-size: 1.125rem; color: var(--muted); max-width: 640px; margin: 0 auto 2.5rem; }
+    .hero-stats {
+      display: flex; flex-wrap: wrap; justify-content: center; gap: 1.5rem;
+      position: relative;
+    }
+    .stat-pill {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: .5rem 1.25rem;
+      font-size: .875rem;
+    }
+    .stat-pill strong { color: var(--accent2); margin-right: .35rem; }
+
+    /* LAYOUT */
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; }
+    section { padding: 4rem 0; }
+    section + section { border-top: 1px solid var(--border); }
+
+    h2 {
+      font-size: 1.75rem; font-weight: 700;
+      margin-bottom: .5rem;
+      display: flex; align-items: center; gap: .75rem;
+    }
+    h2 .icon { font-size: 1.5rem; }
+    .section-sub { color: var(--muted); margin-bottom: 2.5rem; }
+
+    /* CARDS */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.25rem;
+    }
+
+    /* DATASET FEATURES */
+    .feature-group h3 { font-size: .8rem; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin-bottom: .75rem; }
+    .feature-tags { display: flex; flex-wrap: wrap; gap: .4rem; }
+    .tag {
+      font-size: .75rem; padding: .2rem .6rem; border-radius: 6px;
+      background: var(--surface2); border: 1px solid var(--border); color: var(--text);
+    }
+    .tag.target { background: rgba(79,142,247,.15); border-color: rgba(79,142,247,.4); color: var(--accent); }
+
+    /* MODEL CARDS */
+    .model-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      display: flex; flex-direction: column;
+    }
+    .model-card-header {
+      padding: 1.25rem 1.5rem;
+      display: flex; align-items: center; gap: .75rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .model-badge {
+      width: 36px; height: 36px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; flex-shrink: 0;
+    }
+    .model-card-header h3 { font-size: 1rem; font-weight: 700; }
+    .model-card-header p { font-size: .8rem; color: var(--muted); }
+    .model-card-body { padding: 1.25rem 1.5rem; flex: 1; }
+    .model-card-img { width: 100%; border-top: 1px solid var(--border); cursor: pointer; transition: opacity .2s; }
+    .model-card-img:hover { opacity: .85; }
+
+    .metric-row { display: flex; justify-content: space-between; align-items: center; padding: .4rem 0; border-bottom: 1px solid var(--border); }
+    .metric-row:last-child { border-bottom: none; }
+    .metric-label { font-size: .8rem; color: var(--muted); }
+    .metric-value { font-size: .95rem; font-weight: 600; }
+    .metric-bar-wrap { margin-top: .5rem; height: 4px; background: var(--surface2); border-radius: 2px; overflow: hidden; }
+    .metric-bar { height: 100%; border-radius: 2px; transition: width .6s; }
+
+    /* CHART */
+    .chart-wrap { position: relative; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; }
+
+    /* COMPARISON TABLE */
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: .875rem; }
+    thead th { background: var(--surface2); color: var(--muted); font-size: .75rem; text-transform: uppercase; letter-spacing: .05em; padding: .75rem 1rem; text-align: left; border-bottom: 1px solid var(--border); }
+    tbody td { padding: .75rem 1rem; border-bottom: 1px solid var(--border); }
+    tbody tr:hover td { background: var(--surface2); }
+    .best { color: var(--accent2); font-weight: 700; }
+    .pill { display: inline-block; font-size: .7rem; padding: .15rem .5rem; border-radius: 999px; }
+    .pill-blue { background: rgba(79,142,247,.15); color: var(--accent); border: 1px solid rgba(79,142,247,.3); }
+    .pill-green { background: rgba(52,211,153,.15); color: var(--accent2); border: 1px solid rgba(52,211,153,.3); }
+    .pill-orange { background: rgba(249,115,22,.15); color: var(--accent3); border: 1px solid rgba(249,115,22,.3); }
+    .pill-purple { background: rgba(167,139,250,.15); color: var(--accent4); border: 1px solid rgba(167,139,250,.3); }
+    .pill-gray { background: rgba(136,146,164,.15); color: var(--muted); border: 1px solid rgba(136,146,164,.3); }
+
+    /* ENSEMBLE */
+    .ensemble-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.25rem; }
+    .ensemble-img { width: 100%; border-radius: var(--radius); border: 1px solid var(--border); cursor: pointer; }
+
+    /* FINDINGS */
+    .findings-list { list-style: none; display: flex; flex-direction: column; gap: .85rem; }
+    .findings-list li { display: flex; gap: 1rem; align-items: flex-start; }
+    .finding-icon { font-size: 1.25rem; flex-shrink: 0; margin-top: .05rem; }
+    .finding-text strong { color: var(--text); display: block; margin-bottom: .15rem; }
+    .finding-text span { color: var(--muted); font-size: .875rem; }
+
+    /* DASHBOARD */
+    .dashboard-img { width: 100%; border-radius: var(--radius); border: 1px solid var(--border); cursor: pointer; }
+
+    /* LIGHTBOX */
+    .lightbox { display: none; position: fixed; inset: 0; z-index: 999; background: rgba(0,0,0,.85); align-items: center; justify-content: center; padding: 1rem; }
+    .lightbox.open { display: flex; }
+    .lightbox img { max-width: 90vw; max-height: 90vh; border-radius: var(--radius); box-shadow: 0 25px 60px rgba(0,0,0,.6); }
+    .lightbox-close { position: absolute; top: 1rem; right: 1rem; background: var(--surface); border: 1px solid var(--border); color: var(--text); border-radius: 50%; width: 36px; height: 36px; cursor: pointer; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2rem 1.5rem;
+      text-align: center;
+      color: var(--muted); font-size: .875rem;
+    }
+
+    @media (max-width: 600px) {
+      .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <span class="nav-brand">ME 231 — Burnout Prediction</span>
+  <ul class="nav-links">
+    <li><a href="#dataset">Dataset</a></li>
+    <li><a href="#models">Models</a></li>
+    <li><a href="#comparison">Comparison</a></li>
+    <li><a href="#ensemble">Ensemble</a></li>
+    <li><a href="#dashboard">Dashboard</a></li>
+    <li><a href="#findings">Findings</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-tag">ME 231 · Final Project</div>
+  <h1>Employee <span>Burnout</span> Prediction<br>via Machine Learning</h1>
+  <p class="hero-sub">
+    Comparing five ML approaches — Neural Network, SVM, Boosted Trees, K-Means, and Linear Regression —
+    on a 150,000-record tech-industry mental health dataset.
+  </p>
+  <div class="hero-stats">
+    <div class="stat-pill"><strong>150,000</strong> employees</div>
+    <div class="stat-pill"><strong>25</strong> features</div>
+    <div class="stat-pill"><strong>5</strong> models tested</div>
+    <div class="stat-pill"><strong>93.4%</strong> best accuracy (SVM)</div>
+    <div class="stat-pill"><strong>R² 73.9%</strong> regression score</div>
+  </div>
+</header>
+
+<!-- DATASET -->
+<section id="dataset">
+  <div class="container">
+    <h2><span class="icon">🗂</span> Dataset</h2>
+    <p class="section-sub">Kaggle — <em>Employee Mental Health and Burnout Dataset</em> · 150,001 rows · 25 columns</p>
+    <div class="card-grid">
+
+      <div class="card">
+        <div class="feature-group">
+          <h3>Demographics &amp; Work Context</h3>
+          <div class="feature-tags">
+            <span class="tag">age</span>
+            <span class="tag">gender</span>
+            <span class="tag">job_role</span>
+            <span class="tag">experience_years</span>
+            <span class="tag">company_size</span>
+            <span class="tag">work_mode</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="feature-group">
+          <h3>Work Patterns</h3>
+          <div class="feature-tags">
+            <span class="tag">work_hours_per_week</span>
+            <span class="tag">overtime_hours</span>
+            <span class="tag">meetings_per_day</span>
+            <span class="tag">deadlines_missed</span>
+            <span class="tag">job_satisfaction</span>
+            <span class="tag">manager_support</span>
+            <span class="tag">work_life_balance</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="feature-group">
+          <h3>Health &amp; Lifestyle</h3>
+          <div class="feature-tags">
+            <span class="tag">sleep_hours</span>
+            <span class="tag">physical_activity_days</span>
+            <span class="tag">screen_time_hours</span>
+            <span class="tag">caffeine_intake</span>
+            <span class="tag">social_support_score</span>
+            <span class="tag">has_therapy</span>
+            <span class="tag">seeks_professional_help</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="feature-group">
+          <h3>Mental Health Scores</h3>
+          <div class="feature-tags">
+            <span class="tag">stress_level</span>
+            <span class="tag">anxiety_score</span>
+            <span class="tag">depression_score</span>
+          </div>
+        </div>
+        <br>
+        <div class="feature-group">
+          <h3>Prediction Targets</h3>
+          <div class="feature-tags">
+            <span class="tag target">burnout_score (continuous)</span>
+            <span class="tag target">burnout_level (Low / Moderate / High)</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <br>
+    <div class="card" style="display:flex;gap:2rem;flex-wrap:wrap;margin-top:.5rem;">
+      <div>
+        <div style="font-size:.8rem;color:var(--muted);margin-bottom:.3rem;">Train / Test Split</div>
+        <div style="font-size:1.25rem;font-weight:700;">80% / 20%</div>
+        <div style="font-size:.8rem;color:var(--muted);">120,000 train · 30,000 test</div>
+      </div>
+      <div style="width:1px;background:var(--border);"></div>
+      <div>
+        <div style="font-size:.8rem;color:var(--muted);margin-bottom:.3rem;">Preprocessing</div>
+        <div style="font-size:.9rem;">Drop impossible values <code style="font-size:.8rem;background:var(--surface2);padding:.1rem .3rem;border-radius:4px;">work_hours &gt; 168</code></div>
+        <div style="font-size:.8rem;color:var(--muted);">Ordinal encode target · One-hot encode categoricals · StandardScaler</div>
+      </div>
+      <div style="width:1px;background:var(--border);"></div>
+      <div>
+        <div style="font-size:.8rem;color:var(--muted);margin-bottom:.3rem;">Leakage Prevention</div>
+        <div style="font-size:.9rem;">Drop <code style="font-size:.8rem;background:var(--surface2);padding:.1rem .3rem;border-radius:4px;">burnout_score</code> when classifying</div>
+        <div style="font-size:.8rem;color:var(--muted);">Drop highly correlated redundant features (|r| &gt; 0.8)</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MODELS -->
+<section id="models">
+  <div class="container">
+    <h2><span class="icon">🤖</span> Individual Models</h2>
+    <p class="section-sub">Five model architectures evaluated on the same train/test split.</p>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.25rem;">
+
+      <!-- NN -->
+      <div class="model-card">
+        <div class="model-card-header">
+          <div class="model-badge" style="background:rgba(79,142,247,.15);">🧠</div>
+          <div>
+            <h3>Neural Network</h3>
+            <p>MLPClassifier · (64, 32) hidden layers</p>
+          </div>
+        </div>
+        <div class="model-card-body">
+          <div class="metric-row">
+            <span class="metric-label">Accuracy</span>
+            <span class="metric-value" style="color:var(--accent);">91.78%</span>
+          </div>
+          <div class="metric-bar-wrap"><div class="metric-bar" style="width:91.78%;background:var(--accent);"></div></div>
+          <div class="metric-row" style="margin-top:.75rem;">
+            <span class="metric-label">Precision (weighted)</span>
+            <span class="metric-value">91.63%</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label">Recall (weighted)</span>
+            <span class="metric-value">91.78%</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label">F1 (weighted)</span>
+            <span class="metric-value">91.70%</span>
+          </div>
+        </div>
+        <img class="model-card-img" src="images/nn_model_plot.png" alt="Neural Network confusion matrix" onclick="openLightbox(this.src)" />
+      </div>
+
+      <!-- SVM -->
+      <div class="model-card">
+        <div class="model-card-header">
+          <div class="model-badge" style="background:rgba(52,211,153,.15);">📐</div>
+          <div>
+            <h3>Linear SVM</h3>
+            <p>LinearSVC · max_iter=5000</p>
+          </div>
+        </div>
+        <div class="model-card-body">
+          <div class="metric-row">
+            <span class="metric-label">Accuracy</span>
+            <span class="metric-value" style="color:var(--accent2);">93.40% ✓ best</span>
+          </div>
+          <div class="metric-bar-wrap"><div class="metric-bar" style="width:93.40%;background:var(--accent2);"></div></div>
+          <div class="metric-row" style="margin-top:.75rem;">
+            <span class="metric-label">Precision (weighted)</span>
+            <span class="metric-value">92.98%</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label">Recall (weighted)</span>
+            <span class="metric-value">93.40%</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label">F1 (weighted)</span>
+            <span class="metric-value">93.07%</span>
+          </div>
+        </div>
+        <img class="model-card-img" src="images/svm_model_plot.png" alt="SVM confusion matrix" onclick="openLightbox(this.src)" />
+      </div>
+
+      <!-- Boosted Tree -->
+      <div class="model-card">
+        <div class="model-card-header">
+          <div class="model-badge" style="background:rgba(249,115,22,.15);">🌳</div>
+          <div>
+            <h3>Boosted Tree</h3>
+            <p>HistGradientBoostingClassifier · max_iter=200</p>
+          </div>
+        </div>
+        <div class="model-card-body">
+          <div class="metric-row">
+            <span class="metric-label">Accuracy</span>
+            <span class="metric-value" style="color:var(--accent3);">92.84%</span>
+          </div>
+          <div class="metric-bar-wrap"><div class="metric-bar" style="width:92.84%;background:var(--accent3);"></div></div>
+          <div class="metric-row" style="margin-top:.75rem;">
+            <span class="metric-label">Precision (weighted)</span>
+            <span class="metric-value">92.54%</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label">Recall (weighted)</span>
+            <span class="metric-value">92.84%</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label">F1 (weighted)</span>
+            <span class="metric-value">92.55%</span>
+          </div>
+        </div>
+        <img class="model-card-img" src="images/boosted_tree_model_plot.png" alt="Boosted Tree confusion matrix" onclick="openLightbox(this.src)" />
+      </div>
+
+      <!-- KMeans -->
+      <div class="model-card">
+        <div class="model-card-header">
+          <div class="model-badge" style="background:rgba(167,139,250,.15);">🔵</div>
+          <div>
+            <h3>K-Means Clustering</h3>
+            <p>Unsupervised baseline · k=3 · n_init=20</p>
+          </div>
+        </div>
+        <div class="model-card-body">
+          <div style="font-size:.75rem;color:var(--muted);margin-bottom:.75rem;padding:.4rem .6rem;background:rgba(167,139,250,.1);border:1px solid rgba(167,139,250,.3);border-radius:6px;">
+            Unsupervised — uses clustering metrics, not accuracy
+          </div>
+          <div class="metric-row">
+            <span class="metric-label">Adjusted Rand Index</span>
+            <span class="metric-value" style="color:var(--accent4);">0.076</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label">Norm. Mutual Info</span>
+            <span class="metric-value">0.149</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label">Silhouette Score</span>
+            <span class="metric-value">0.045</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label">F1 (weighted)</span>
+            <span class="metric-value">82.01%</span>
+          </div>
+        </div>
+        <img class="model-card-img" src="images/kmeans_model_plot.png" alt="KMeans confusion matrix" onclick="openLightbox(this.src)" />
+      </div>
+
+      <!-- Regression -->
+      <div class="model-card">
+        <div class="model-card-header">
+          <div class="model-badge" style="background:rgba(250,204,21,.15);">📈</div>
+          <div>
+            <h3>Linear Regression</h3>
+            <p>Predicts continuous burnout_score → binned to classes</p>
+          </div>
+        </div>
+        <div class="model-card-body">
+          <div style="font-size:.75rem;color:var(--muted);margin-bottom:.75rem;padding:.4rem .6rem;background:rgba(250,204,21,.1);border:1px solid rgba(250,204,21,.3);border-radius:6px;">
+            Regression task — class bins: Low (&lt;1.2) · Moderate (1.2–2.5) · High (&gt;2.5)
+          </div>
+          <div class="metric-row">
+            <span class="metric-label">R² Score</span>
+            <span class="metric-value" style="color:var(--warn);">73.94%</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label">MAE</span>
+            <span class="metric-value">0.453</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label">RMSE</span>
+            <span class="metric-value">0.569</span>
+          </div>
+        </div>
+        <img class="model-card-img" src="images/regression_model_plot.png" alt="Regression predicted vs true" onclick="openLightbox(this.src)" />
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- COMPARISON CHART + TABLE -->
+<section id="comparison">
+  <div class="container">
+    <h2><span class="icon">📊</span> Model Comparison</h2>
+    <p class="section-sub">Accuracy and weighted F1 for the three supervised classifiers (K-Means and Regression use different metrics).</p>
+
+    <div class="chart-wrap" style="margin-bottom:1.5rem;">
+      <canvas id="compareChart" height="90"></canvas>
+    </div>
+
+    <div class="table-wrap card">
+      <table>
+        <thead>
+          <tr>
+            <th>Model</th>
+            <th>Type</th>
+            <th>Accuracy</th>
+            <th>Precision (W)</th>
+            <th>Recall (W)</th>
+            <th>F1 (W)</th>
+            <th>Other</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Linear SVM</strong></td>
+            <td><span class="pill pill-green">Classifier</span></td>
+            <td class="best">93.40%</td>
+            <td>92.98%</td>
+            <td class="best">93.40%</td>
+            <td class="best">93.07%</td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td><strong>Boosted Tree</strong></td>
+            <td><span class="pill pill-orange">Classifier</span></td>
+            <td>92.84%</td>
+            <td>92.54%</td>
+            <td>92.84%</td>
+            <td>92.55%</td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td><strong>Neural Network</strong></td>
+            <td><span class="pill pill-blue">Classifier</span></td>
+            <td>91.78%</td>
+            <td>91.63%</td>
+            <td>91.78%</td>
+            <td>91.70%</td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td><strong>K-Means</strong></td>
+            <td><span class="pill pill-purple">Clustering</span></td>
+            <td>—</td>
+            <td>76.98%</td>
+            <td>87.74%</td>
+            <td>82.01%</td>
+            <td>ARI 0.076 · NMI 0.149 · Sil 0.045</td>
+          </tr>
+          <tr>
+            <td><strong>Linear Regression</strong></td>
+            <td><span class="pill pill-gray">Regression</span></td>
+            <td>—</td>
+            <td>—</td>
+            <td>—</td>
+            <td>—</td>
+            <td>R² 73.94% · MAE 0.453 · RMSE 0.569</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ENSEMBLE -->
+<section id="ensemble">
+  <div class="container">
+    <h2><span class="icon">🤝</span> Ensemble Methods</h2>
+    <p class="section-sub">Majority-vote ensembles combining NN, SVM, Boosted Tree, and Regression predictions. K-Means excluded due to poor clustering quality.</p>
+
+    <div class="ensemble-grid" style="margin-bottom:1.5rem;">
+
+      <div class="card">
+        <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1rem;">
+          <div style="background:rgba(52,211,153,.15);border:1px solid rgba(52,211,153,.3);border-radius:8px;padding:.4rem .65rem;font-size:.8rem;color:var(--accent2);font-weight:600;">Equal Weight Vote</div>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">Accuracy</span>
+          <span class="metric-value" style="color:var(--accent2);">93.29%</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">Macro F1</span>
+          <span class="metric-value">59.45%</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">Weights</span>
+          <span class="metric-value">0.25 / 0.25 / 0.25 / 0.25</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1rem;">
+          <div style="background:rgba(167,139,250,.15);border:1px solid rgba(167,139,250,.3);border-radius:8px;padding:.4rem .65rem;font-size:.8rem;color:var(--accent4);font-weight:600;">Weighted Vote</div>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">Accuracy</span>
+          <span class="metric-value" style="color:var(--accent4);">93.29%</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">Macro F1</span>
+          <span class="metric-value">59.45%</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">Weights</span>
+          <span class="metric-value">F1-proportional (equal default)</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="ensemble-grid">
+      <div>
+        <p style="font-size:.8rem;color:var(--muted);margin-bottom:.5rem;">Equal-Weight Vote — Confusion Matrix</p>
+        <img class="ensemble-img" src="images/ensemble_vote_confusion_matrix.png" alt="Ensemble vote confusion matrix" onclick="openLightbox(this.src)" />
+      </div>
+      <div>
+        <p style="font-size:.8rem;color:var(--muted);margin-bottom:.5rem;">Weighted Vote — Confusion Matrix</p>
+        <img class="ensemble-img" src="images/ensemble_weighted_confusion_matrix.png" alt="Ensemble weighted confusion matrix" onclick="openLightbox(this.src)" />
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:1.25rem;background:rgba(250,204,21,.05);border-color:rgba(250,204,21,.3);">
+      <p style="font-size:.875rem;color:var(--muted);">
+        <strong style="color:var(--warn);">Note on Macro F1:</strong>
+        The low macro F1 (~59%) vs. high weighted F1 reflects class imbalance in the dataset — the "Moderate" class is substantially larger,
+        so accuracy and weighted F1 are high while per-class macro F1 is pulled down by weaker minority-class recall.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- DASHBOARD -->
+<section id="dashboard">
+  <div class="container">
+    <h2><span class="icon">📋</span> Full Comparison Dashboard</h2>
+    <p class="section-sub">All seven confusion matrices and a model ranking panel generated by <code style="font-size:.8rem;background:var(--surface2);padding:.1rem .4rem;border-radius:4px;">run_all_models.py</code>. Click to enlarge.</p>
+    <img class="dashboard-img" src="images/model_comparison_dashboard.png" alt="Model comparison dashboard" onclick="openLightbox(this.src)" />
+  </div>
+</section>
+
+<!-- FINDINGS -->
+<section id="findings">
+  <div class="container">
+    <h2><span class="icon">💡</span> Key Findings</h2>
+    <p class="section-sub">Insights from training and evaluating all five approaches on 150,000 employee records.</p>
+
+    <ul class="findings-list">
+      <li>
+        <span class="finding-icon">🏆</span>
+        <div class="finding-text">
+          <strong>Linear SVM achieved the highest accuracy (93.4%)</strong>
+          <span>Despite being a simpler model than the neural network or boosted tree, the linear SVM topped all classifiers — suggesting the burnout classes are nearly linearly separable in the scaled feature space.</span>
+        </div>
+      </li>
+      <li>
+        <span class="finding-icon">🌳</span>
+        <div class="finding-text">
+          <strong>Boosted Tree placed a close second (92.84%)</strong>
+          <span>HistGradientBoostingClassifier with early stopping matched SVM performance closely, and required no manual feature scaling thanks to its tree-based splits.</span>
+        </div>
+      </li>
+      <li>
+        <span class="finding-icon">🔵</span>
+        <div class="finding-text">
+          <strong>K-Means failed as a burnout classifier (ARI = 0.076)</strong>
+          <span>Extremely low Adjusted Rand Index and Silhouette Score indicate that burnout level does not cluster naturally in this feature space — the boundaries between Low/Moderate/High are not driven by geometric separation.</span>
+        </div>
+      </li>
+      <li>
+        <span class="finding-icon">📈</span>
+        <div class="finding-text">
+          <strong>Linear Regression explains 73.9% of burnout score variance (R² = 0.74)</strong>
+          <span>The continuous burnout score has meaningful linear relationships with the input features, though unexplained variance suggests non-linear factors also play a role.</span>
+        </div>
+      </li>
+      <li>
+        <span class="finding-icon">🤝</span>
+        <div class="finding-text">
+          <strong>Ensemble voting did not beat the best individual model</strong>
+          <span>Both ensemble methods achieved 93.29% accuracy — slightly below the SVM's 93.40%. Combining a weaker model (regression predictions via binning) with stronger classifiers diluted the ensemble's performance.</span>
+        </div>
+      </li>
+      <li>
+        <span class="finding-icon">⚖️</span>
+        <div class="finding-text">
+          <strong>Class imbalance affects macro F1</strong>
+          <span>Weighted F1 (93%+) and macro F1 (59%) diverge strongly, indicating the "Moderate" burnout class dominates predictions. Minority classes (Low, High) are harder to distinguish, likely because moderate burnout shares features with both extremes.</span>
+        </div>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <p>ME 231 Final Project · Employee Burnout Prediction · Dataset: <em>tech_mental_health_burnout.csv</em> (150,000 records)</p>
+    <p style="margin-top:.4rem;color:#4a5568;">Models: Neural Network · Linear SVM · Gradient Boosted Tree · K-Means · Linear Regression</p>
+  </div>
+</footer>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+  <img id="lightbox-img" src="" alt="Enlarged chart" onclick="event.stopPropagation()" />
+</div>
+
+<script>
+  // Lightbox
+  function openLightbox(src) {
+    document.getElementById('lightbox-img').src = src;
+    document.getElementById('lightbox').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeLightbox() {
+    document.getElementById('lightbox').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+
+  // Comparison Bar Chart
+  const ctx = document.getElementById('compareChart').getContext('2d');
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['Linear SVM', 'Boosted Tree', 'Neural Network'],
+      datasets: [
+        {
+          label: 'Accuracy',
+          data: [93.40, 92.84, 91.78],
+          backgroundColor: 'rgba(52,211,153,.7)',
+          borderColor: 'rgba(52,211,153,1)',
+          borderWidth: 1,
+          borderRadius: 6,
+        },
+        {
+          label: 'Precision (weighted)',
+          data: [92.98, 92.54, 91.63],
+          backgroundColor: 'rgba(79,142,247,.7)',
+          borderColor: 'rgba(79,142,247,1)',
+          borderWidth: 1,
+          borderRadius: 6,
+        },
+        {
+          label: 'F1 (weighted)',
+          data: [93.07, 92.55, 91.70],
+          backgroundColor: 'rgba(249,115,22,.7)',
+          borderColor: 'rgba(249,115,22,1)',
+          borderWidth: 1,
+          borderRadius: 6,
+        },
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { labels: { color: '#8892a4', font: { size: 12 } } },
+        tooltip: { callbacks: { label: ctx => ` ${ctx.dataset.label}: ${ctx.parsed.y.toFixed(2)}%` } }
+      },
+      scales: {
+        x: { ticks: { color: '#8892a4' }, grid: { color: 'rgba(46,51,80,.5)' } },
+        y: {
+          min: 88, max: 95,
+          ticks: { color: '#8892a4', callback: v => v + '%' },
+          grid: { color: 'rgba(46,51,80,.5)' }
+        }
+      }
+    }
+  });
+</script>
+</body>
+</html>

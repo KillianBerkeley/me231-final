@@ -3,3 +3,4 @@
 results/
 *.joblib
 *.pkl
+# docs/images are committed for GitHub Pages

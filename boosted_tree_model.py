@@ -1,4 +1,4 @@
-"""Histogram-based Gradient Boosting classifier (sklearn) — train/test and comparison outputs."""
+"""Histogram-based Gradient Boosting classifier (sklearn) - train/test and comparison outputs."""
 
 from __future__ import annotations
 
