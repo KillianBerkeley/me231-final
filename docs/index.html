@@ -24,7 +24,6 @@
     }
 
     html { scroll-behavior: smooth; }
-
     body {
       background: var(--bg);
       color: var(--text);
@@ -35,7 +34,7 @@
     /* NAV */
     nav {
       position: sticky; top: 0; z-index: 100;
-      background: rgba(15,17,23,.92);
+      background: rgba(15,17,23,.95);
       backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--border);
       padding: 0 2rem;
@@ -70,9 +69,9 @@
     }
     h1 { font-size: clamp(2rem, 5vw, 3.25rem); font-weight: 800; line-height: 1.15; margin-bottom: 1rem; }
     h1 span { color: var(--accent); }
-    .hero-sub { font-size: 1.125rem; color: var(--muted); max-width: 640px; margin: 0 auto 2.5rem; }
+    .hero-sub { font-size: 1.1rem; color: var(--muted); max-width: 680px; margin: 0 auto 2.5rem; line-height: 1.7; }
     .hero-stats {
-      display: flex; flex-wrap: wrap; justify-content: center; gap: 1.5rem;
+      display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem;
       position: relative;
     }
     .stat-pill {
@@ -95,7 +94,23 @@
       display: flex; align-items: center; gap: .75rem;
     }
     h2 .icon { font-size: 1.5rem; }
-    .section-sub { color: var(--muted); margin-bottom: 2.5rem; }
+    .section-sub { color: var(--muted); margin-bottom: 2.5rem; font-size: .95rem; line-height: 1.7; }
+
+    h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: .6rem; }
+
+    /* CALLOUT BOX */
+    .callout {
+      border-left: 3px solid var(--accent);
+      background: rgba(79,142,247,.07);
+      padding: 1rem 1.25rem;
+      border-radius: 0 var(--radius) var(--radius) 0;
+      margin-bottom: 1.25rem;
+      font-size: .9rem; color: var(--text); line-height: 1.7;
+    }
+    .callout.green { border-color: var(--accent2); background: rgba(52,211,153,.07); }
+    .callout.orange { border-color: var(--accent3); background: rgba(249,115,22,.07); }
+    .callout.yellow { border-color: var(--warn); background: rgba(250,204,21,.07); }
+    .callout.purple { border-color: var(--accent4); background: rgba(167,139,250,.07); }
 
     /* CARDS */
     .card {
@@ -109,23 +124,53 @@
       grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
       gap: 1.25rem;
     }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+    @media(max-width:700px) { .two-col { grid-template-columns: 1fr; } }
 
-    /* DATASET FEATURES */
-    .feature-group h3 { font-size: .8rem; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin-bottom: .75rem; }
-    .feature-tags { display: flex; flex-wrap: wrap; gap: .4rem; }
-    .tag {
-      font-size: .75rem; padding: .2rem .6rem; border-radius: 6px;
-      background: var(--surface2); border: 1px solid var(--border); color: var(--text);
+    /* PIPELINE */
+    .pipeline {
+      display: flex; align-items: flex-start; gap: 0; flex-wrap: wrap;
+      margin: 1.5rem 0;
     }
-    .tag.target { background: rgba(79,142,247,.15); border-color: rgba(79,142,247,.4); color: var(--accent); }
-
-    /* MODEL CARDS */
-    .model-card {
+    .pipeline-step {
+      flex: 1; min-width: 150px;
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      overflow: hidden;
-      display: flex; flex-direction: column;
+      padding: 1rem;
+      text-align: center;
+      position: relative;
+    }
+    .pipeline-step + .pipeline-step::before {
+      content: '→';
+      position: absolute; left: -1.1rem; top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted); font-size: 1.2rem;
+      background: var(--bg); padding: 0 .1rem;
+    }
+    .pipeline-step .step-num {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 28px; height: 28px;
+      background: rgba(79,142,247,.15);
+      border: 1px solid rgba(79,142,247,.4);
+      border-radius: 50%;
+      font-size: .8rem; font-weight: 700; color: var(--accent);
+      margin-bottom: .5rem;
+    }
+    .pipeline-step .step-label { font-size: .8rem; font-weight: 600; display: block; margin-bottom: .25rem; }
+    .pipeline-step .step-desc { font-size: .72rem; color: var(--muted); }
+
+    /* DATASET FEATURES */
+    .feature-group h4 { font-size: .8rem; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin-bottom: .6rem; }
+    .feature-tags { display: flex; flex-wrap: wrap; gap: .4rem; }
+    .tag { font-size: .75rem; padding: .2rem .6rem; border-radius: 6px; background: var(--surface2); border: 1px solid var(--border); color: var(--text); }
+    .tag.target { background: rgba(79,142,247,.15); border-color: rgba(79,142,247,.4); color: var(--accent); }
+
+    /* MODEL CARDS */
+    .models-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.25rem; }
+    .model-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); overflow: hidden; display: flex; flex-direction: column;
     }
     .model-card-header {
       padding: 1.25rem 1.5rem;
@@ -137,7 +182,7 @@
       display: flex; align-items: center; justify-content: center;
       font-size: 1.1rem; flex-shrink: 0;
     }
-    .model-card-header h3 { font-size: 1rem; font-weight: 700; }
+    .model-card-header h3 { font-size: 1rem; font-weight: 700; margin: 0; }
     .model-card-header p { font-size: .8rem; color: var(--muted); }
     .model-card-body { padding: 1.25rem 1.5rem; flex: 1; }
     .model-card-img { width: 100%; border-top: 1px solid var(--border); cursor: pointer; transition: opacity .2s; }
@@ -148,7 +193,14 @@
     .metric-label { font-size: .8rem; color: var(--muted); }
     .metric-value { font-size: .95rem; font-weight: 600; }
     .metric-bar-wrap { margin-top: .5rem; height: 4px; background: var(--surface2); border-radius: 2px; overflow: hidden; }
-    .metric-bar { height: 100%; border-radius: 2px; transition: width .6s; }
+    .metric-bar { height: 100%; border-radius: 2px; }
+    .model-desc { font-size: .82rem; color: var(--muted); margin-bottom: .9rem; line-height: 1.6; padding: .6rem .8rem; background: var(--surface2); border-radius: 8px; }
+
+    /* METRIC GLOSSARY */
+    .glossary { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1rem; margin-top: 1.25rem; }
+    .glossary-item { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem 1.25rem; }
+    .glossary-term { font-weight: 700; font-size: .95rem; margin-bottom: .3rem; }
+    .glossary-def { font-size: .82rem; color: var(--muted); line-height: 1.6; }
 
     /* CHART */
     .chart-wrap { position: relative; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; }
@@ -161,11 +213,11 @@
     tbody tr:hover td { background: var(--surface2); }
     .best { color: var(--accent2); font-weight: 700; }
     .pill { display: inline-block; font-size: .7rem; padding: .15rem .5rem; border-radius: 999px; }
-    .pill-blue { background: rgba(79,142,247,.15); color: var(--accent); border: 1px solid rgba(79,142,247,.3); }
-    .pill-green { background: rgba(52,211,153,.15); color: var(--accent2); border: 1px solid rgba(52,211,153,.3); }
+    .pill-blue   { background: rgba(79,142,247,.15); color: var(--accent);  border: 1px solid rgba(79,142,247,.3); }
+    .pill-green  { background: rgba(52,211,153,.15); color: var(--accent2); border: 1px solid rgba(52,211,153,.3); }
     .pill-orange { background: rgba(249,115,22,.15); color: var(--accent3); border: 1px solid rgba(249,115,22,.3); }
     .pill-purple { background: rgba(167,139,250,.15); color: var(--accent4); border: 1px solid rgba(167,139,250,.3); }
-    .pill-gray { background: rgba(136,146,164,.15); color: var(--muted); border: 1px solid rgba(136,146,164,.3); }
+    .pill-gray   { background: rgba(136,146,164,.15); color: var(--muted);  border: 1px solid rgba(136,146,164,.3); }
 
     /* ENSEMBLE */
     .ensemble-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.25rem; }
@@ -182,22 +234,15 @@
     .dashboard-img { width: 100%; border-radius: var(--radius); border: 1px solid var(--border); cursor: pointer; }
 
     /* LIGHTBOX */
-    .lightbox { display: none; position: fixed; inset: 0; z-index: 999; background: rgba(0,0,0,.85); align-items: center; justify-content: center; padding: 1rem; }
+    .lightbox { display: none; position: fixed; inset: 0; z-index: 999; background: rgba(0,0,0,.88); align-items: center; justify-content: center; padding: 1rem; }
     .lightbox.open { display: flex; }
     .lightbox img { max-width: 90vw; max-height: 90vh; border-radius: var(--radius); box-shadow: 0 25px 60px rgba(0,0,0,.6); }
     .lightbox-close { position: absolute; top: 1rem; right: 1rem; background: var(--surface); border: 1px solid var(--border); color: var(--text); border-radius: 50%; width: 36px; height: 36px; cursor: pointer; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; }
 
     /* FOOTER */
-    footer {
-      border-top: 1px solid var(--border);
-      padding: 2rem 1.5rem;
-      text-align: center;
-      color: var(--muted); font-size: .875rem;
-    }
+    footer { border-top: 1px solid var(--border); padding: 2rem 1.5rem; text-align: center; color: var(--muted); font-size: .875rem; }
 
-    @media (max-width: 600px) {
-      .nav-links { display: none; }
-    }
+    @media (max-width: 600px) { .nav-links { display: none; } }
   </style>
 </head>
 <body>
@@ -206,11 +251,12 @@
 <nav>
   <span class="nav-brand">ME 231 — Burnout Prediction</span>
   <ul class="nav-links">
+    <li><a href="#problem">Problem</a></li>
     <li><a href="#dataset">Dataset</a></li>
+    <li><a href="#methodology">Methodology</a></li>
     <li><a href="#models">Models</a></li>
     <li><a href="#comparison">Comparison</a></li>
     <li><a href="#ensemble">Ensemble</a></li>
-    <li><a href="#dashboard">Dashboard</a></li>
     <li><a href="#findings">Findings</a></li>
   </ul>
 </nav>
@@ -218,30 +264,99 @@
 <!-- HERO -->
 <header class="hero">
   <div class="hero-tag">ME 231 · Final Project</div>
-  <h1>Employee <span>Burnout</span> Prediction<br>via Machine Learning</h1>
+  <h1>Can We Predict<br>Employee <span>Burnout</span>?</h1>
   <p class="hero-sub">
-    Comparing five ML approaches — Neural Network, SVM, Boosted Trees, K-Means, and Linear Regression —
-    on a 150,000-record tech-industry mental health dataset.
+    We trained and compared five different machine learning models — Neural Network, Linear SVM, Gradient Boosted Trees,
+    K-Means Clustering, and Linear Regression — on a 150,000-employee tech-industry mental health dataset to find out
+    which approach best predicts burnout level and what the data can actually tell us.
   </p>
   <div class="hero-stats">
-    <div class="stat-pill"><strong>150,000</strong> employees</div>
-    <div class="stat-pill"><strong>25</strong> features</div>
-    <div class="stat-pill"><strong>5</strong> models tested</div>
+    <div class="stat-pill"><strong>150,000</strong> employee records</div>
+    <div class="stat-pill"><strong>25</strong> input features</div>
+    <div class="stat-pill"><strong>5</strong> model types tested</div>
     <div class="stat-pill"><strong>93.4%</strong> best accuracy (SVM)</div>
     <div class="stat-pill"><strong>R² 73.9%</strong> regression score</div>
   </div>
 </header>
 
+<!-- PROBLEM STATEMENT -->
+<section id="problem">
+  <div class="container">
+    <h2><span class="icon">🎯</span> Problem Statement</h2>
+    <p class="section-sub">What are we trying to predict, and why does it matter?</p>
+
+    <div class="callout">
+      <strong>Goal:</strong> Given a set of measurable attributes about an employee — their work hours, stress levels,
+      sleep, job satisfaction, and more — can a machine learning model accurately predict whether that employee is
+      experiencing <em>Low</em>, <em>Moderate</em>, or <em>High</em> burnout?
+    </div>
+
+    <div class="two-col" style="margin-bottom:1.5rem;">
+      <div class="card">
+        <h3>Why Burnout?</h3>
+        <p style="font-size:.875rem;color:var(--muted);line-height:1.7;margin-top:.5rem;">
+          Burnout is a state of chronic workplace stress that leads to physical and emotional exhaustion, cynicism,
+          and reduced effectiveness. It is a leading driver of employee turnover, healthcare costs, and lost
+          productivity — especially in the tech industry, where long hours and high pressure are common. Early
+          identification allows organizations to intervene before burnout becomes severe.
+        </p>
+      </div>
+      <div class="card">
+        <h3>The ML Framing</h3>
+        <p style="font-size:.875rem;color:var(--muted);line-height:1.7;margin-top:.5rem;">
+          This is a <strong style="color:var(--text);">classification problem</strong>: given input features, predict
+          which category (Low / Moderate / High) a sample belongs to. We also run a
+          <strong style="color:var(--text);">regression task</strong>: predicting the raw continuous burnout score.
+          Both tasks let us understand the data from different angles. We compare five approaches to see which family
+          of model handles this data best — and to understand <em>why</em>.
+        </p>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="card">
+        <h3>What we're comparing</h3>
+        <ul style="font-size:.875rem;color:var(--muted);line-height:2;padding-left:1.25rem;">
+          <li><strong style="color:var(--text);">Supervised classifiers</strong> — Neural Network, Linear SVM, Boosted Trees</li>
+          <li><strong style="color:var(--text);">Unsupervised clustering</strong> — K-Means (does burnout cluster naturally?)</li>
+          <li><strong style="color:var(--text);">Regression</strong> — Linear model for the continuous score</li>
+          <li><strong style="color:var(--text);">Ensemble voting</strong> — combining model predictions</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>The three burnout classes</h3>
+        <div style="display:flex;flex-direction:column;gap:.5rem;margin-top:.5rem;">
+          <div style="display:flex;align-items:center;gap:.75rem;font-size:.875rem;">
+            <span style="background:rgba(52,211,153,.2);color:var(--accent2);padding:.2rem .7rem;border-radius:6px;font-weight:700;min-width:80px;text-align:center;">Low (0)</span>
+            <span style="color:var(--muted);">Employee is not significantly burned out. Stress and workload are manageable.</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:.75rem;font-size:.875rem;">
+            <span style="background:rgba(250,204,21,.2);color:var(--warn);padding:.2rem .7rem;border-radius:6px;font-weight:700;min-width:80px;text-align:center;">Moderate (1)</span>
+            <span style="color:var(--muted);">Employee shows signs of burnout — the most common class in this dataset.</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:.75rem;font-size:.875rem;">
+            <span style="background:rgba(249,115,22,.2);color:var(--accent3);padding:.2rem .7rem;border-radius:6px;font-weight:700;min-width:80px;text-align:center;">High (2)</span>
+            <span style="color:var(--muted);">Employee is severely burned out. Immediate intervention likely needed.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- DATASET -->
 <section id="dataset">
   <div class="container">
     <h2><span class="icon">🗂</span> Dataset</h2>
-    <p class="section-sub">Kaggle — <em>Employee Mental Health and Burnout Dataset</em> · 150,001 rows · 25 columns</p>
-    <div class="card-grid">
+    <p class="section-sub">
+      We use the <em>Employee Mental Health and Burnout Dataset</em> from Kaggle, containing 150,001 rows and 25 columns.
+      Each row represents one employee and their self-reported or measured attributes.
+    </p>
 
+    <div class="card-grid" style="margin-bottom:1.5rem;">
       <div class="card">
         <div class="feature-group">
-          <h3>Demographics &amp; Work Context</h3>
+          <h4>Demographics &amp; Work Context</h4>
           <div class="feature-tags">
             <span class="tag">age</span>
             <span class="tag">gender</span>
@@ -252,10 +367,9 @@
           </div>
         </div>
       </div>
-
       <div class="card">
         <div class="feature-group">
-          <h3>Work Patterns</h3>
+          <h4>Work Patterns</h4>
           <div class="feature-tags">
             <span class="tag">work_hours_per_week</span>
             <span class="tag">overtime_hours</span>
@@ -267,10 +381,9 @@
           </div>
         </div>
       </div>
-
       <div class="card">
         <div class="feature-group">
-          <h3>Health &amp; Lifestyle</h3>
+          <h4>Health &amp; Lifestyle</h4>
           <div class="feature-tags">
             <span class="tag">sleep_hours</span>
             <span class="tag">physical_activity_days</span>
@@ -282,10 +395,9 @@
           </div>
         </div>
       </div>
-
       <div class="card">
         <div class="feature-group">
-          <h3>Mental Health Scores</h3>
+          <h4>Mental Health Scores</h4>
           <div class="feature-tags">
             <span class="tag">stress_level</span>
             <span class="tag">anxiety_score</span>
@@ -294,18 +406,24 @@
         </div>
         <br>
         <div class="feature-group">
-          <h3>Prediction Targets</h3>
+          <h4>Prediction Targets</h4>
           <div class="feature-tags">
             <span class="tag target">burnout_score (continuous)</span>
             <span class="tag target">burnout_level (Low / Moderate / High)</span>
           </div>
         </div>
       </div>
-
     </div>
 
-    <br>
-    <div class="card" style="display:flex;gap:2rem;flex-wrap:wrap;margin-top:.5rem;">
+    <div class="callout orange">
+      <strong>Important:</strong> The dataset has a significant class imbalance — <em>Moderate</em> burnout is by far
+      the most common label. This matters because a model can achieve high accuracy simply by always predicting
+      "Moderate," without actually learning to distinguish Low and High cases. We track both
+      <strong>weighted F1</strong> (reflects overall accuracy) and <strong>macro F1</strong> (treats all classes equally)
+      to catch this.
+    </div>
+
+    <div class="card" style="display:flex;gap:2rem;flex-wrap:wrap;">
       <div>
         <div style="font-size:.8rem;color:var(--muted);margin-bottom:.3rem;">Train / Test Split</div>
         <div style="font-size:1.25rem;font-weight:700;">80% / 20%</div>
@@ -313,15 +431,167 @@
       </div>
       <div style="width:1px;background:var(--border);"></div>
       <div>
-        <div style="font-size:.8rem;color:var(--muted);margin-bottom:.3rem;">Preprocessing</div>
-        <div style="font-size:.9rem;">Drop impossible values <code style="font-size:.8rem;background:var(--surface2);padding:.1rem .3rem;border-radius:4px;">work_hours &gt; 168</code></div>
-        <div style="font-size:.8rem;color:var(--muted);">Ordinal encode target · One-hot encode categoricals · StandardScaler</div>
+        <div style="font-size:.8rem;color:var(--muted);margin-bottom:.3rem;">Data Cleaning</div>
+        <div style="font-size:.875rem;">Drop rows with any missing values</div>
+        <div style="font-size:.8rem;color:var(--muted);">Remove impossible values: <code style="font-size:.8rem;background:var(--surface2);padding:.1rem .3rem;border-radius:4px;">work_hours &gt; 168/week</code></div>
+      </div>
+      <div style="width:1px;background:var(--border);"></div>
+      <div>
+        <div style="font-size:.8rem;color:var(--muted);margin-bottom:.3rem;">Encoding</div>
+        <div style="font-size:.875rem;">One-hot encode: gender, job_role, company_size, work_mode</div>
+        <div style="font-size:.8rem;color:var(--muted);">Ordinal encode target: Low→0, Moderate→1, High→2</div>
       </div>
       <div style="width:1px;background:var(--border);"></div>
       <div>
         <div style="font-size:.8rem;color:var(--muted);margin-bottom:.3rem;">Leakage Prevention</div>
-        <div style="font-size:.9rem;">Drop <code style="font-size:.8rem;background:var(--surface2);padding:.1rem .3rem;border-radius:4px;">burnout_score</code> when classifying</div>
-        <div style="font-size:.8rem;color:var(--muted);">Drop highly correlated redundant features (|r| &gt; 0.8)</div>
+        <div style="font-size:.875rem;">Drop <code style="font-size:.8rem;background:var(--surface2);padding:.1rem .3rem;border-radius:4px;">burnout_score</code> when predicting level</div>
+        <div style="font-size:.8rem;color:var(--muted);">StandardScaler fit on train only, applied to test</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- METHODOLOGY -->
+<section id="methodology">
+  <div class="container">
+    <h2><span class="icon">⚙️</span> Methodology</h2>
+    <p class="section-sub">
+      How the experiment works: from raw data to trained models to comparison results.
+    </p>
+
+    <!-- Pipeline diagram -->
+    <div class="pipeline" style="gap:.6rem;margin-bottom:2rem;">
+      <div class="pipeline-step">
+        <div class="step-num">1</div>
+        <span class="step-label">Load CSV</span>
+        <span class="step-desc">150K rows from Kaggle dataset</span>
+      </div>
+      <div class="pipeline-step">
+        <div class="step-num">2</div>
+        <span class="step-label">Clean</span>
+        <span class="step-desc">Drop NaNs, remove impossible hours</span>
+      </div>
+      <div class="pipeline-step">
+        <div class="step-num">3</div>
+        <span class="step-label">Encode</span>
+        <span class="step-desc">One-hot + ordinal encoding</span>
+      </div>
+      <div class="pipeline-step">
+        <div class="step-num">4</div>
+        <span class="step-label">Split 80/20</span>
+        <span class="step-desc">Train and test sets</span>
+      </div>
+      <div class="pipeline-step">
+        <div class="step-num">5</div>
+        <span class="step-label">Scale</span>
+        <span class="step-desc">StandardScaler (fit on train only)</span>
+      </div>
+      <div class="pipeline-step">
+        <div class="step-num">6</div>
+        <span class="step-label">Train 5 Models</span>
+        <span class="step-desc">Each model fits on training data only</span>
+      </div>
+      <div class="pipeline-step">
+        <div class="step-num">7</div>
+        <span class="step-label">Evaluate</span>
+        <span class="step-desc">Predict on test set, compute metrics</span>
+      </div>
+      <div class="pipeline-step">
+        <div class="step-num">8</div>
+        <span class="step-label">Compare</span>
+        <span class="step-desc">Ensemble + side-by-side analysis</span>
+      </div>
+    </div>
+
+    <div class="callout green">
+      <strong>Key principle — train/test separation:</strong> All five models are trained <em>only</em> on the 80%
+      training set, then evaluated on the 20% test set that they have never seen. This simulates how the model would
+      perform on new, real-world employees. Metrics computed on data used for training would be misleading
+      (overfitting). The scaler is also fit only on training data to prevent data leakage.
+    </div>
+
+    <div class="two-col" style="margin-top:1.5rem;">
+      <div class="card">
+        <h3>Why five different models?</h3>
+        <p style="font-size:.875rem;color:var(--muted);line-height:1.7;margin-top:.5rem;">
+          Different model families make fundamentally different assumptions about how the data is structured.
+          By comparing all five, we learn not just <em>what</em> performs best, but <em>why</em> — for example,
+          if a simple linear model matches a deep network, the data's patterns are likely linear. If clustering
+          fails completely, the burnout classes don't form natural geometric groups.
+        </p>
+      </div>
+      <div class="card">
+        <h3>Consistent evaluation</h3>
+        <p style="font-size:.875rem;color:var(--muted);line-height:1.7;margin-top:.5rem;">
+          Every supervised classifier uses the <strong style="color:var(--text);">exact same train/test split</strong>
+          (random seed 42, 80/20). This is critical: if models used different data, you couldn't fairly compare their
+          results. The preprocessing pipeline is shared via a common <code style="font-size:.8rem;background:var(--surface2);padding:.1rem .3rem;border-radius:4px;">data_cleaning.py</code>
+          module run once and saved as a bundle.
+        </p>
+      </div>
+    </div>
+
+    <!-- Metric glossary -->
+    <h3 style="margin-top:2.5rem;margin-bottom:.5rem;">What do the metrics mean?</h3>
+    <p style="font-size:.875rem;color:var(--muted);margin-bottom:1rem;">
+      Understanding what we're measuring is essential for interpreting the results.
+    </p>
+    <div class="glossary">
+      <div class="glossary-item">
+        <div class="glossary-term" style="color:var(--accent2);">Accuracy</div>
+        <div class="glossary-def">
+          Fraction of all predictions that were correct. Easy to understand, but misleading when classes are
+          imbalanced — a model that always says "Moderate" can get high accuracy by luck.
+        </div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term" style="color:var(--accent);">Precision (weighted)</div>
+        <div class="glossary-def">
+          When the model predicts a class, how often is it right? Weighted means each class is weighted by how
+          many samples it has, so the dominant class matters more.
+        </div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term" style="color:var(--accent);">Recall (weighted)</div>
+        <div class="glossary-def">
+          Of all the employees that actually belong to a class, what fraction did the model correctly identify?
+          Low recall on "High" burnout means real high-burnout cases are being missed.
+        </div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term" style="color:var(--accent3);">F1 Score (weighted)</div>
+        <div class="glossary-def">
+          Harmonic mean of precision and recall. Balances both concerns in one number. Weighted version is
+          dominated by the most common class (Moderate).
+        </div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term" style="color:var(--warn);">Macro F1</div>
+        <div class="glossary-def">
+          Average F1 across all classes, giving each class equal weight regardless of size. This is the
+          <em>fairest</em> metric here — it penalizes a model that performs well on Moderate but poorly on Low/High.
+        </div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term" style="color:var(--accent4);">R² Score</div>
+        <div class="glossary-def">
+          For regression only. Fraction of variance in the target explained by the model. R²=1.0 is perfect;
+          R²=0 means the model does no better than predicting the mean. Our regression achieves R²=0.74.
+        </div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term" style="color:var(--muted);">Adjusted Rand Index (ARI)</div>
+        <div class="glossary-def">
+          For K-Means only. Measures how well the unsupervised clusters match the true labels (0=random, 1=perfect).
+          Our ARI=0.076 indicates near-random clustering — K-Means essentially failed.
+        </div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term" style="color:var(--muted);">Confusion Matrix</div>
+        <div class="glossary-def">
+          A table showing where the model's predictions went right and wrong: rows are true classes,
+          columns are predicted classes. Diagonal = correct; off-diagonal = errors.
+        </div>
       </div>
     </div>
   </div>
@@ -331,9 +601,13 @@
 <section id="models">
   <div class="container">
     <h2><span class="icon">🤖</span> Individual Models</h2>
-    <p class="section-sub">Five model architectures evaluated on the same train/test split.</p>
+    <p class="section-sub">
+      Five model architectures, each evaluated on the same 30,000-employee test set.
+      The confusion matrix for each shows which burnout levels were correctly predicted (diagonal)
+      and where errors occurred (off-diagonal). Rows = true label, columns = predicted label.
+    </p>
 
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.25rem;">
+    <div class="models-grid">
 
       <!-- NN -->
       <div class="model-card">
@@ -341,10 +615,15 @@
           <div class="model-badge" style="background:rgba(79,142,247,.15);">🧠</div>
           <div>
             <h3>Neural Network</h3>
-            <p>MLPClassifier · (64, 32) hidden layers</p>
+            <p>MLPClassifier · 2 hidden layers (64, 32 neurons)</p>
           </div>
         </div>
         <div class="model-card-body">
+          <div class="model-desc">
+            A multi-layer perceptron that learns non-linear patterns through multiple layers of weighted
+            connections. The network has 64 neurons in the first hidden layer and 32 in the second,
+            activated by ReLU functions, trained via backpropagation for up to 500 epochs.
+          </div>
           <div class="metric-row">
             <span class="metric-label">Accuracy</span>
             <span class="metric-value" style="color:var(--accent);">91.78%</span>
@@ -372,10 +651,15 @@
           <div class="model-badge" style="background:rgba(52,211,153,.15);">📐</div>
           <div>
             <h3>Linear SVM</h3>
-            <p>LinearSVC · max_iter=5000</p>
+            <p>LinearSVC · max_iter=5000 · <span style="color:var(--accent2);">Best classifier</span></p>
           </div>
         </div>
         <div class="model-card-body">
+          <div class="model-desc">
+            A Support Vector Machine finds the hyperplane that maximally separates the classes in feature space.
+            The "linear" variant assumes classes can be separated by a straight boundary (after scaling).
+            It's computationally efficient on large datasets and surprisingly powerful when data is linearly separable.
+          </div>
           <div class="metric-row">
             <span class="metric-label">Accuracy</span>
             <span class="metric-value" style="color:var(--accent2);">93.40% ✓ best</span>
@@ -407,6 +691,11 @@
           </div>
         </div>
         <div class="model-card-body">
+          <div class="model-desc">
+            Gradient boosting builds an ensemble of decision trees sequentially — each tree corrects the errors
+            of the previous ones. The histogram-based variant bins continuous features for speed. Early stopping
+            monitors a held-out validation fraction to prevent overfitting.
+          </div>
           <div class="metric-row">
             <span class="metric-label">Accuracy</span>
             <span class="metric-value" style="color:var(--accent3);">92.84%</span>
@@ -438,12 +727,18 @@
           </div>
         </div>
         <div class="model-card-body">
-          <div style="font-size:.75rem;color:var(--muted);margin-bottom:.75rem;padding:.4rem .6rem;background:rgba(167,139,250,.1);border:1px solid rgba(167,139,250,.3);border-radius:6px;">
-            Unsupervised — uses clustering metrics, not accuracy
+          <div class="model-desc">
+            K-Means is an <strong>unsupervised</strong> algorithm — it has no access to the true burnout labels
+            during training. It groups employees into 3 clusters based purely on feature similarity, then we map
+            each cluster to the majority burnout level within it. This tests whether burnout forms natural geometric
+            groups in feature space.
+          </div>
+          <div style="font-size:.75rem;color:var(--accent4);margin-bottom:.75rem;padding:.4rem .6rem;background:rgba(167,139,250,.1);border:1px solid rgba(167,139,250,.3);border-radius:6px;">
+            Unsupervised — evaluated with clustering metrics, not accuracy
           </div>
           <div class="metric-row">
             <span class="metric-label">Adjusted Rand Index</span>
-            <span class="metric-value" style="color:var(--accent4);">0.076</span>
+            <span class="metric-value" style="color:var(--accent4);">0.076 (near random)</span>
           </div>
           <div class="metric-row">
             <span class="metric-label">Norm. Mutual Info</span>
@@ -451,11 +746,7 @@
           </div>
           <div class="metric-row">
             <span class="metric-label">Silhouette Score</span>
-            <span class="metric-value">0.045</span>
-          </div>
-          <div class="metric-row">
-            <span class="metric-label">F1 (weighted)</span>
-            <span class="metric-value">82.01%</span>
+            <span class="metric-value">0.045 (no clear clusters)</span>
           </div>
         </div>
         <img class="model-card-img" src="images/kmeans_model_plot.png" alt="KMeans confusion matrix" onclick="openLightbox(this.src)" />
@@ -467,44 +758,66 @@
           <div class="model-badge" style="background:rgba(250,204,21,.15);">📈</div>
           <div>
             <h3>Linear Regression</h3>
-            <p>Predicts continuous burnout_score → binned to classes</p>
+            <p>Predicts continuous burnout_score, not the class label</p>
           </div>
         </div>
         <div class="model-card-body">
-          <div style="font-size:.75rem;color:var(--muted);margin-bottom:.75rem;padding:.4rem .6rem;background:rgba(250,204,21,.1);border:1px solid rgba(250,204,21,.3);border-radius:6px;">
-            Regression task — class bins: Low (&lt;1.2) · Moderate (1.2–2.5) · High (&gt;2.5)
+          <div class="model-desc">
+            Instead of predicting Low/Moderate/High directly, linear regression predicts the raw numerical
+            burnout score. This is a different task: fitting a weighted sum of all 25 features to minimize
+            prediction error. The score is then converted to classes using percentile cutpoints from the
+            training data (≤33rd percentile → Low, ≤66th → Moderate, else → High).
+          </div>
+          <div style="font-size:.75rem;color:var(--warn);margin-bottom:.75rem;padding:.4rem .6rem;background:rgba(250,204,21,.1);border:1px solid rgba(250,204,21,.3);border-radius:6px;">
+            Regression task · Continuous score → binned to Low / Moderate / High
           </div>
           <div class="metric-row">
             <span class="metric-label">R² Score</span>
-            <span class="metric-value" style="color:var(--warn);">73.94%</span>
+            <span class="metric-value" style="color:var(--warn);">73.94% of variance explained</span>
           </div>
           <div class="metric-row">
-            <span class="metric-label">MAE</span>
-            <span class="metric-value">0.453</span>
+            <span class="metric-label">MAE (mean abs. error)</span>
+            <span class="metric-value">0.453 score units</span>
           </div>
           <div class="metric-row">
             <span class="metric-label">RMSE</span>
-            <span class="metric-value">0.569</span>
+            <span class="metric-value">0.569 score units</span>
           </div>
         </div>
         <img class="model-card-img" src="images/regression_model_plot.png" alt="Regression predicted vs true" onclick="openLightbox(this.src)" />
       </div>
 
     </div>
+
+    <div class="callout" style="margin-top:1.5rem;">
+      <strong>How to read the confusion matrices:</strong> Each row is a true burnout level (Low, Moderate, High)
+      and each column is what the model predicted. The diagonal cells (top-left to bottom-right) show correct
+      predictions. Off-diagonal cells show errors — for example, a value in row "High" column "Moderate" means
+      the model predicted Moderate when the truth was High. High off-diagonal values in the "Moderate" column
+      across all models reveal the dataset's class imbalance — the model defaults toward Moderate.
+    </div>
   </div>
 </section>
 
-<!-- COMPARISON CHART + TABLE -->
+<!-- COMPARISON -->
 <section id="comparison">
   <div class="container">
     <h2><span class="icon">📊</span> Model Comparison</h2>
-    <p class="section-sub">Accuracy and weighted F1 for the three supervised classifiers (K-Means and Regression use different metrics).</p>
+    <p class="section-sub">
+      Head-to-head metrics for all five approaches on the same 30,000-row test set.
+      The bar chart focuses on the three supervised classifiers since K-Means and Regression
+      use fundamentally different metrics.
+    </p>
 
     <div class="chart-wrap" style="margin-bottom:1.5rem;">
+      <p style="font-size:.8rem;color:var(--muted);margin-bottom:1rem;">
+        Supervised classifiers only — K-Means and Regression are excluded because they don't produce classification accuracy in the same way.
+        Y-axis starts at 88% to make differences visible (all models are within ~2% of each other).
+      </p>
       <canvas id="compareChart" height="90"></canvas>
     </div>
 
-    <div class="table-wrap card">
+    <div class="table-wrap card" style="margin-bottom:1.25rem;">
       <table>
         <thead>
           <tr>
@@ -522,10 +835,10 @@
             <td><strong>Linear SVM</strong></td>
             <td><span class="pill pill-green">Classifier</span></td>
             <td class="best">93.40%</td>
-            <td>92.98%</td>
+            <td class="best">92.98%</td>
             <td class="best">93.40%</td>
             <td class="best">93.07%</td>
-            <td>—</td>
+            <td style="color:var(--muted);font-size:.8rem;">—</td>
           </tr>
           <tr>
             <td><strong>Boosted Tree</strong></td>
@@ -534,7 +847,7 @@
             <td>92.54%</td>
             <td>92.84%</td>
             <td>92.55%</td>
-            <td>—</td>
+            <td style="color:var(--muted);font-size:.8rem;">—</td>
           </tr>
           <tr>
             <td><strong>Neural Network</strong></td>
@@ -543,7 +856,7 @@
             <td>91.63%</td>
             <td>91.78%</td>
             <td>91.70%</td>
-            <td>—</td>
+            <td style="color:var(--muted);font-size:.8rem;">—</td>
           </tr>
           <tr>
             <td><strong>K-Means</strong></td>
@@ -552,7 +865,7 @@
             <td>76.98%</td>
             <td>87.74%</td>
             <td>82.01%</td>
-            <td>ARI 0.076 · NMI 0.149 · Sil 0.045</td>
+            <td style="color:var(--muted);font-size:.8rem;">ARI 0.076 · NMI 0.149 · Sil 0.045</td>
           </tr>
           <tr>
             <td><strong>Linear Regression</strong></td>
@@ -561,10 +874,18 @@
             <td>—</td>
             <td>—</td>
             <td>—</td>
-            <td>R² 73.94% · MAE 0.453 · RMSE 0.569</td>
+            <td style="color:var(--muted);font-size:.8rem;">R² 73.94% · MAE 0.453 · RMSE 0.569</td>
           </tr>
         </tbody>
       </table>
+    </div>
+
+    <div class="callout yellow">
+      <strong>Note on the ~1–2% accuracy range:</strong> The three supervised classifiers are all within about 1.6
+      percentage points of each other (91.78%–93.40%). This narrow range suggests the dataset is not particularly
+      difficult for any of these approaches — all three are close to ceiling. The more meaningful differentiation
+      appears in <strong>macro F1</strong>, where you can see which model handles the minority classes (Low and High)
+      better.
     </div>
   </div>
 </section>
@@ -573,13 +894,39 @@
 <section id="ensemble">
   <div class="container">
     <h2><span class="icon">🤝</span> Ensemble Methods</h2>
-    <p class="section-sub">Majority-vote ensembles combining NN, SVM, Boosted Tree, and Regression predictions. K-Means excluded due to poor clustering quality.</p>
+    <p class="section-sub">
+      An ensemble combines the predictions of multiple models, hoping that their errors are uncorrelated —
+      so where one model is wrong, another is right. We test two voting strategies combining NN, SVM,
+      Boosted Tree, and the binned Regression predictions. K-Means is excluded because its cluster
+      quality is too poor to add signal.
+    </p>
+
+    <div class="two-col" style="margin-bottom:1.5rem;">
+      <div class="card">
+        <h3>How voting works</h3>
+        <p style="font-size:.875rem;color:var(--muted);line-height:1.7;margin-top:.5rem;">
+          For each employee in the test set, each of the four models independently casts a "vote" for the burnout
+          level (Low, Moderate, or High). The final prediction is whichever class gets the most votes. Ties are
+          broken by choosing the lower class index (Low preferred over Moderate, Moderate over High) — a
+          conservative choice.
+        </p>
+      </div>
+      <div class="card">
+        <h3>Equal vs. weighted voting</h3>
+        <p style="font-size:.875rem;color:var(--muted);line-height:1.7;margin-top:.5rem;">
+          In <strong style="color:var(--text);">equal-weight</strong> voting each model gets 1 vote.
+          In <strong style="color:var(--text);">weighted voting</strong>, each model's vote carries
+          a weight proportional to its test-set macro F1 score — better models have louder voices.
+          In practice, both strategies produced identical results here because the weight differences were
+          small enough to not change any majority decisions.
+        </p>
+      </div>
+    </div>
 
     <div class="ensemble-grid" style="margin-bottom:1.5rem;">
-
       <div class="card">
         <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1rem;">
-          <div style="background:rgba(52,211,153,.15);border:1px solid rgba(52,211,153,.3);border-radius:8px;padding:.4rem .65rem;font-size:.8rem;color:var(--accent2);font-weight:600;">Equal Weight Vote</div>
+          <div style="background:rgba(52,211,153,.15);border:1px solid rgba(52,211,153,.3);border-radius:8px;padding:.4rem .65rem;font-size:.8rem;color:var(--accent2);font-weight:600;">Equal-Weight Majority Vote</div>
         </div>
         <div class="metric-row">
           <span class="metric-label">Accuracy</span>
@@ -590,14 +937,13 @@
           <span class="metric-value">59.45%</span>
         </div>
         <div class="metric-row">
-          <span class="metric-label">Weights</span>
-          <span class="metric-value">0.25 / 0.25 / 0.25 / 0.25</span>
+          <span class="metric-label">Models</span>
+          <span class="metric-value" style="font-size:.8rem;">NN · SVM · Boosted · Regression</span>
         </div>
       </div>
-
       <div class="card">
         <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1rem;">
-          <div style="background:rgba(167,139,250,.15);border:1px solid rgba(167,139,250,.3);border-radius:8px;padding:.4rem .65rem;font-size:.8rem;color:var(--accent4);font-weight:600;">Weighted Vote</div>
+          <div style="background:rgba(167,139,250,.15);border:1px solid rgba(167,139,250,.3);border-radius:8px;padding:.4rem .65rem;font-size:.8rem;color:var(--accent4);font-weight:600;">Weighted Majority Vote</div>
         </div>
         <div class="metric-row">
           <span class="metric-label">Accuracy</span>
@@ -609,13 +955,12 @@
         </div>
         <div class="metric-row">
           <span class="metric-label">Weights</span>
-          <span class="metric-value">F1-proportional (equal default)</span>
+          <span class="metric-value" style="font-size:.8rem;">0.25 / 0.25 / 0.25 / 0.25 (equal at default)</span>
         </div>
       </div>
-
     </div>
 
-    <div class="ensemble-grid">
+    <div class="ensemble-grid" style="margin-bottom:1.25rem;">
       <div>
         <p style="font-size:.8rem;color:var(--muted);margin-bottom:.5rem;">Equal-Weight Vote — Confusion Matrix</p>
         <img class="ensemble-img" src="images/ensemble_vote_confusion_matrix.png" alt="Ensemble vote confusion matrix" onclick="openLightbox(this.src)" />
@@ -626,12 +971,12 @@
       </div>
     </div>
 
-    <div class="card" style="margin-top:1.25rem;background:rgba(250,204,21,.05);border-color:rgba(250,204,21,.3);">
-      <p style="font-size:.875rem;color:var(--muted);">
-        <strong style="color:var(--warn);">Note on Macro F1:</strong>
-        The low macro F1 (~59%) vs. high weighted F1 reflects class imbalance in the dataset — the "Moderate" class is substantially larger,
-        so accuracy and weighted F1 are high while per-class macro F1 is pulled down by weaker minority-class recall.
-      </p>
+    <div class="callout orange">
+      <strong>Why didn't the ensemble beat the best individual model?</strong> The SVM achieved 93.40% while
+      both ensembles only reached 93.29%. Including a weaker model (the regression-to-class conversion) diluted
+      the strong signal from the SVM and Boosted Tree. Ensembles work best when the component models make
+      <em>different</em> errors — here, three strong classifiers tend to agree on the same mistakes, so a fourth
+      vote from the regression model occasionally overrules a correct majority.
     </div>
   </div>
 </section>
@@ -640,7 +985,11 @@
 <section id="dashboard">
   <div class="container">
     <h2><span class="icon">📋</span> Full Comparison Dashboard</h2>
-    <p class="section-sub">All seven confusion matrices and a model ranking panel generated by <code style="font-size:.8rem;background:var(--surface2);padding:.1rem .4rem;border-radius:4px;">run_all_models.py</code>. Click to enlarge.</p>
+    <p class="section-sub">
+      All seven confusion matrices side-by-side with a model ranking panel. Click to enlarge.
+      Each matrix shows Low / Moderate / High on both axes. Rows are the true burnout level;
+      columns are what each model predicted. Numbers on the diagonal are correct predictions.
+    </p>
     <img class="dashboard-img" src="images/model_comparison_dashboard.png" alt="Model comparison dashboard" onclick="openLightbox(this.src)" />
   </div>
 </section>
@@ -649,49 +998,83 @@
 <section id="findings">
   <div class="container">
     <h2><span class="icon">💡</span> Key Findings</h2>
-    <p class="section-sub">Insights from training and evaluating all five approaches on 150,000 employee records.</p>
+    <p class="section-sub">What we learned from training and comparing all five approaches on 150,000 employee records.</p>
 
     <ul class="findings-list">
       <li>
         <span class="finding-icon">🏆</span>
         <div class="finding-text">
-          <strong>Linear SVM achieved the highest accuracy (93.4%)</strong>
-          <span>Despite being a simpler model than the neural network or boosted tree, the linear SVM topped all classifiers — suggesting the burnout classes are nearly linearly separable in the scaled feature space.</span>
+          <strong>Linear SVM achieved the highest accuracy (93.4%) — beating the neural network</strong>
+          <span>Despite being structurally simpler than the multi-layer neural network or the boosted tree ensemble,
+          the linear SVM topped all classifiers. This strongly suggests that after StandardScaler normalization,
+          the three burnout classes are nearly <em>linearly separable</em> in the 25-feature space — meaning a
+          flat decision boundary can distinguish Low from Moderate from High without needing the complex curved
+          boundaries that neural networks or boosted trees provide.</span>
         </div>
       </li>
       <li>
         <span class="finding-icon">🌳</span>
         <div class="finding-text">
-          <strong>Boosted Tree placed a close second (92.84%)</strong>
-          <span>HistGradientBoostingClassifier with early stopping matched SVM performance closely, and required no manual feature scaling thanks to its tree-based splits.</span>
+          <strong>Boosted Tree placed second (92.84%) despite not needing feature scaling</strong>
+          <span>HistGradientBoostingClassifier is inherently scale-invariant — it uses thresholds on raw feature
+          values, not distances. Yet it still came within 0.6% of the SVM. With more hyperparameter tuning or
+          a larger tree depth, it could potentially match the SVM. Its slight edge over the neural network suggests
+          the tree-based splits capture some structure the MLP missed.</span>
+        </div>
+      </li>
+      <li>
+        <span class="finding-icon">🧠</span>
+        <div class="finding-text">
+          <strong>Neural Network came third — more complexity did not help here</strong>
+          <span>The MLPClassifier (64, 32 hidden layers) achieved 91.78%, roughly 1.6% below the SVM. This
+          underperformance suggests the added complexity of multiple non-linear layers is not warranted for
+          this dataset. The patterns that matter for predicting burnout appear to be approximately linear once
+          features are standardized. A deeper or wider network might close the gap, but it would also require
+          far more tuning.</span>
         </div>
       </li>
       <li>
         <span class="finding-icon">🔵</span>
         <div class="finding-text">
-          <strong>K-Means failed as a burnout classifier (ARI = 0.076)</strong>
-          <span>Extremely low Adjusted Rand Index and Silhouette Score indicate that burnout level does not cluster naturally in this feature space — the boundaries between Low/Moderate/High are not driven by geometric separation.</span>
+          <strong>K-Means failed completely — burnout does not cluster naturally (ARI = 0.076)</strong>
+          <span>An ARI near zero means the unsupervised clusters are almost entirely random with respect to
+          the true burnout labels. The silhouette score of 0.045 (well below the 0.5 threshold for meaningful
+          clusters) confirms that the three burnout classes do not form distinct geometric groupings in feature
+          space. K-Means all but predicted the same cluster for every employee, confirming it cannot distinguish
+          Low from Moderate from High without label supervision.</span>
         </div>
       </li>
       <li>
         <span class="finding-icon">📈</span>
         <div class="finding-text">
-          <strong>Linear Regression explains 73.9% of burnout score variance (R² = 0.74)</strong>
-          <span>The continuous burnout score has meaningful linear relationships with the input features, though unexplained variance suggests non-linear factors also play a role.</span>
+          <strong>Linear Regression explains 73.9% of continuous burnout score variance (R² = 0.74)</strong>
+          <span>Even though regression predicts a continuous score rather than a class, achieving R²=0.74 means
+          the 25 input features have meaningful linear relationships with burnout severity. The remaining 26.1%
+          of unexplained variance likely reflects non-linear interactions or unmeasured factors (e.g., personality,
+          management style). The scatter plot shows a well-correlated trend, but systematic over/under-prediction
+          near the extremes confirms the limits of a purely linear fit.</span>
         </div>
       </li>
       <li>
         <span class="finding-icon">🤝</span>
         <div class="finding-text">
-          <strong>Ensemble voting did not beat the best individual model</strong>
-          <span>Both ensemble methods achieved 93.29% accuracy — slightly below the SVM's 93.40%. Combining a weaker model (regression predictions via binning) with stronger classifiers diluted the ensemble's performance.</span>
+          <strong>Ensemble voting did not beat the best individual model (93.29% vs 93.40%)</strong>
+          <span>Both ensemble variants fell 0.11% short of the SVM. This is a common outcome when the component
+          models are high-accuracy and make correlated errors — the "wisdom of crowds" effect breaks down when
+          the crowd agrees on the same mistakes. Including the regression model (with its different class boundaries)
+          added some noise rather than complementary signal.</span>
         </div>
       </li>
       <li>
         <span class="finding-icon">⚖️</span>
         <div class="finding-text">
-          <strong>Class imbalance affects macro F1</strong>
-          <span>Weighted F1 (93%+) and macro F1 (59%) diverge strongly, indicating the "Moderate" burnout class dominates predictions. Minority classes (Low, High) are harder to distinguish, likely because moderate burnout shares features with both extremes.</span>
+          <strong>Class imbalance causes a large gap between weighted F1 (~93%) and macro F1 (~56%)</strong>
+          <span>The "Moderate" burnout class is heavily over-represented in the dataset, so all models learn to
+          predict it well. Weighted F1 is pulled up by this dominant class. Macro F1 treats all three classes
+          equally — and here it reveals that "Low" and especially "High" burnout are much harder to classify
+          correctly. In a real deployment, this matters most: failing to identify High burnout cases could have
+          serious consequences. Future work should consider SMOTE resampling, class-weighted losses, or
+          threshold tuning to improve minority-class recall.</span>
         </div>
       </li>
     </ul>
@@ -700,8 +1083,11 @@
 
 <footer>
   <div class="container">
-    <p>ME 231 Final Project · Employee Burnout Prediction · Dataset: <em>tech_mental_health_burnout.csv</em> (150,000 records)</p>
-    <p style="margin-top:.4rem;color:#4a5568;">Models: Neural Network · Linear SVM · Gradient Boosted Tree · K-Means · Linear Regression</p>
+    <p>ME 231 Final Project · Employee Burnout Prediction</p>
+    <p style="margin-top:.4rem;color:#4a5568;">
+      Dataset: <em>tech_mental_health_burnout.csv</em> (150,000 records · 25 features) ·
+      Models: Neural Network · Linear SVM · Gradient Boosted Tree · K-Means · Linear Regression
+    </p>
   </div>
 </footer>
 
@@ -712,7 +1098,6 @@
 </div>
 
 <script>
-  // Lightbox
   function openLightbox(src) {
     document.getElementById('lightbox-img').src = src;
     document.getElementById('lightbox').classList.add('open');
@@ -724,7 +1109,6 @@
   }
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
 
-  // Comparison Bar Chart
   const ctx = document.getElementById('compareChart').getContext('2d');
   new Chart(ctx, {
     type: 'bar',
@@ -736,24 +1120,21 @@
           data: [93.40, 92.84, 91.78],
           backgroundColor: 'rgba(52,211,153,.7)',
           borderColor: 'rgba(52,211,153,1)',
-          borderWidth: 1,
-          borderRadius: 6,
+          borderWidth: 1, borderRadius: 6,
         },
         {
           label: 'Precision (weighted)',
           data: [92.98, 92.54, 91.63],
           backgroundColor: 'rgba(79,142,247,.7)',
           borderColor: 'rgba(79,142,247,1)',
-          borderWidth: 1,
-          borderRadius: 6,
+          borderWidth: 1, borderRadius: 6,
         },
         {
           label: 'F1 (weighted)',
           data: [93.07, 92.55, 91.70],
           backgroundColor: 'rgba(249,115,22,.7)',
           borderColor: 'rgba(249,115,22,1)',
-          borderWidth: 1,
-          borderRadius: 6,
+          borderWidth: 1, borderRadius: 6,
         },
       ]
     },
@@ -761,14 +1142,20 @@
       responsive: true,
       plugins: {
         legend: { labels: { color: '#8892a4', font: { size: 12 } } },
-        tooltip: { callbacks: { label: ctx => ` ${ctx.dataset.label}: ${ctx.parsed.y.toFixed(2)}%` } }
+        tooltip: { callbacks: { label: ctx => ` ${ctx.dataset.label}: ${ctx.parsed.y.toFixed(2)}%` } },
+        title: {
+          display: true,
+          text: 'Supervised Classifier Comparison — Accuracy, Precision, and F1 (all weighted)',
+          color: '#8892a4', font: { size: 12 }, padding: { bottom: 16 }
+        }
       },
       scales: {
         x: { ticks: { color: '#8892a4' }, grid: { color: 'rgba(46,51,80,.5)' } },
         y: {
           min: 88, max: 95,
           ticks: { color: '#8892a4', callback: v => v + '%' },
-          grid: { color: 'rgba(46,51,80,.5)' }
+          grid: { color: 'rgba(46,51,80,.5)' },
+          title: { display: true, text: 'Score (%)', color: '#8892a4', font: { size: 11 } }
         }
       }
     }

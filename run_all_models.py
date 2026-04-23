@@ -130,17 +130,21 @@ def weighted_vote_row(row: pd.Series, pred_cols: list[str], weights: np.ndarray)
     return int(np.argmax(scores))
 
 
+LEVEL_LABELS = {0: "Low", 1: "Moderate", 2: "High"}
+
+
 def save_confusion_plot(y_true, y_pred, output_path: str, title: str):
     labels = sorted(pd.unique(pd.Series(y_true)))
     cm = confusion_matrix(y_true, y_pred, labels=labels)
-    cm_df = pd.DataFrame(cm, index=labels, columns=labels)
+    display_labels = [LEVEL_LABELS.get(l, str(l)) for l in labels]
+    cm_df = pd.DataFrame(cm, index=display_labels, columns=display_labels)
     out = Path(output_path)
     out.parent.mkdir(parents=True, exist_ok=True)
     plt.figure(figsize=(8, 6))
     sns.heatmap(cm_df, annot=True, fmt="d", cmap="Greens")
     plt.title(title)
-    plt.ylabel("True Label")
-    plt.xlabel("Predicted Label")
+    plt.ylabel("True Burnout Level")
+    plt.xlabel("Predicted Burnout Level")
     plt.tight_layout()
     plt.savefig(out)
     plt.close()
@@ -175,7 +179,8 @@ def save_comparison_dashboard(
         r, c = divmod(idx, n_cols)
         ax = fig.add_subplot(gs[r, c])
         cm = confusion_matrix(y_true, y_pred, labels=labels)
-        cm_df = pd.DataFrame(cm, index=labels, columns=labels)
+        display_labels = [LEVEL_LABELS.get(l, str(l)) for l in labels]
+        cm_df = pd.DataFrame(cm, index=display_labels, columns=display_labels)
         sns.heatmap(cm_df, annot=True, fmt="d", cmap=cmap, ax=ax, cbar=False)
         mf1 = float(f1_score(y_true, y_pred, average="macro"))
         acc = float(accuracy_score(y_true, y_pred))
@@ -183,8 +188,8 @@ def save_comparison_dashboard(
             f"{name}\nmacro F1={mf1:.4f}  acc={acc:.4f}",
             fontsize=10,
         )
-        ax.set_xlabel("Predicted")
-        ax.set_ylabel("True")
+        ax.set_xlabel("Predicted Burnout Level")
+        ax.set_ylabel("True Burnout Level")
         ranking_rows.append(
             {
                 "model": name,

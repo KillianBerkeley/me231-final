@@ -76,17 +76,20 @@ def save_metrics(path: str, metrics: dict):
 
 
 def save_plot(y_true, y_pred, plot_path: str):
+    from sklearn.metrics import r2_score as _r2
+    r2 = _r2(y_true, y_pred)
     out = Path(plot_path)
     out.parent.mkdir(parents=True, exist_ok=True)
     plt.figure(figsize=(7, 6))
-    plt.scatter(y_true, y_pred, alpha=0.5)
-    y_min, y_max = min(y_true.min(), y_pred.min()), max(y_true.max(), y_pred.max())
-    plt.plot([y_min, y_max], [y_min, y_max], linestyle="--", linewidth=1)
-    plt.title("Regression: Predicted vs True")
-    plt.xlabel("True")
-    plt.ylabel("Predicted")
+    plt.scatter(y_true, y_pred, alpha=0.3, s=8, color="#4f8ef7")
+    y_min, y_max = min(float(y_true.min()), float(y_pred.min())), max(float(y_true.max()), float(y_pred.max()))
+    plt.plot([y_min, y_max], [y_min, y_max], linestyle="--", linewidth=1.5, color="#f97316", label="Perfect fit")
+    plt.title(f"Linear Regression: Predicted vs True Burnout Score\nR² = {r2:.3f}")
+    plt.xlabel("True Burnout Score")
+    plt.ylabel("Predicted Burnout Score")
+    plt.legend(fontsize=9)
     plt.tight_layout()
-    plt.savefig(out)
+    plt.savefig(out, dpi=120)
     plt.close()
 
 

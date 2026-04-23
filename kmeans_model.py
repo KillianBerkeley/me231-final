@@ -92,17 +92,21 @@ def map_clusters_to_labels(y_true, clusters):
     return mapped
 
 
+LEVEL_LABELS = {0: "Low", 1: "Moderate", 2: "High"}
+
+
 def save_confusion_plot(y_true, y_pred, plot_path: str):
     labels = sorted(pd.unique(pd.Series(y_true)))
     cm = confusion_matrix(y_true, y_pred, labels=labels)
-    cm_df = pd.DataFrame(cm, index=labels, columns=labels)
+    display_labels = [LEVEL_LABELS.get(l, str(l)) for l in labels]
+    cm_df = pd.DataFrame(cm, index=display_labels, columns=display_labels)
     out = Path(plot_path)
     out.parent.mkdir(parents=True, exist_ok=True)
     plt.figure(figsize=(8, 6))
     sns.heatmap(cm_df, annot=True, fmt="d", cmap="Purples")
-    plt.title("KMeans Confusion Matrix (Cluster->Label Mapped)")
-    plt.ylabel("True Label")
-    plt.xlabel("Predicted Label")
+    plt.title("K-Means — Burnout Level (Cluster→Label Mapped)")
+    plt.ylabel("True Burnout Level")
+    plt.xlabel("Predicted Burnout Level")
     plt.tight_layout()
     plt.savefig(out)
     plt.close()
