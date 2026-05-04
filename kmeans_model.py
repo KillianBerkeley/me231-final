@@ -14,6 +14,7 @@ from sklearn.cluster import KMeans
 from sklearn.metrics import (
     adjusted_rand_score,
     confusion_matrix,
+    f1_score,
     normalized_mutual_info_score,
     precision_recall_fscore_support,
     silhouette_score,
@@ -139,8 +140,11 @@ def main():
     clusters = model.predict(x_test)
     mapped_preds = map_clusters_to_labels(y_test, clusters)
 
-    precision, recall, f1, _ = precision_recall_fscore_support(
+    precision_w, recall_w, f1_w, _ = precision_recall_fscore_support(
         y_test, mapped_preds, average="weighted", zero_division=0
+    )
+    precision_m, recall_m, _, _ = precision_recall_fscore_support(
+        y_test, mapped_preds, average="macro", zero_division=0
     )
 
     sil = float(silhouette_score(x_test, clusters)) if len(np.unique(clusters)) > 1 else float("nan")
@@ -148,9 +152,12 @@ def main():
         "model": MODEL_NAME,
         "adjusted_rand_index": float(adjusted_rand_score(y_test, clusters)),
         "normalized_mutual_info": float(normalized_mutual_info_score(y_test, clusters)),
-        "precision_weighted": float(precision),
-        "recall_weighted": float(recall),
-        "f1_weighted": float(f1),
+        "precision_macro": float(precision_m),
+        "precision_weighted": float(precision_w),
+        "recall_macro": float(recall_m),
+        "recall_weighted": float(recall_w),
+        "f1_macro": float(f1_score(y_test, mapped_preds, average="macro")),
+        "f1_weighted": float(f1_w),
         "silhouette_score": sil,
         "plot_path": args.plot_path,
     }

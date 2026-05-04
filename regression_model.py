@@ -10,7 +10,13 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import pandas as pd
 from sklearn.linear_model import LinearRegression
-from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+from sklearn.metrics import (
+    f1_score,
+    mean_absolute_error,
+    mean_squared_error,
+    precision_recall_fscore_support,
+    r2_score,
+)
 
 from data_cleaning import load_clean_split, score_to_level
 
@@ -121,11 +127,23 @@ def main():
     high_cut = float(y_train.quantile(0.66))
     y_true_class = score_to_level(y_test, low_cut, high_cut)
     y_pred_class = score_to_level(preds, low_cut, high_cut)
+    precision_w, recall_w, _, _ = precision_recall_fscore_support(
+        y_true_class, y_pred_class, average="weighted", zero_division=0
+    )
+    precision_m, recall_m, _, _ = precision_recall_fscore_support(
+        y_true_class, y_pred_class, average="macro", zero_division=0
+    )
     metrics = {
         "model": MODEL_NAME,
         "r2": float(r2_score(y_test, preds)),
         "mae": float(mean_absolute_error(y_test, preds)),
         "rmse": float(math.sqrt(mean_squared_error(y_test, preds))),
+        "precision_macro": float(precision_m),
+        "precision_weighted": float(precision_w),
+        "recall_macro": float(recall_m),
+        "recall_weighted": float(recall_w),
+        "f1_macro": float(f1_score(y_true_class, y_pred_class, average="macro")),
+        "f1_weighted": float(f1_score(y_true_class, y_pred_class, average="weighted")),
         "class_low_cut": low_cut,
         "class_high_cut": high_cut,
         "plot_path": args.plot_path,

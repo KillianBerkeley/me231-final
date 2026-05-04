@@ -9,7 +9,7 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
-from sklearn.metrics import accuracy_score, confusion_matrix, precision_recall_fscore_support
+from sklearn.metrics import accuracy_score, confusion_matrix, f1_score, precision_recall_fscore_support
 from sklearn.svm import LinearSVC
 
 from data_cleaning import load_clean_split
@@ -123,15 +123,21 @@ def main():
         model = bundle["model"]
 
     preds = model.predict(x_test)
-    precision, recall, f1, _ = precision_recall_fscore_support(
+    precision_w, recall_w, f1_w, _ = precision_recall_fscore_support(
         y_test, preds, average="weighted", zero_division=0
+    )
+    precision_m, recall_m, _, _ = precision_recall_fscore_support(
+        y_test, preds, average="macro", zero_division=0
     )
     metrics = {
         "model": MODEL_NAME,
         "accuracy": float(accuracy_score(y_test, preds)),
-        "precision_weighted": float(precision),
-        "recall_weighted": float(recall),
-        "f1_weighted": float(f1),
+        "precision_macro": float(precision_m),
+        "precision_weighted": float(precision_w),
+        "recall_macro": float(recall_m),
+        "recall_weighted": float(recall_w),
+        "f1_macro": float(f1_score(y_test, preds, average="macro")),
+        "f1_weighted": float(f1_w),
         "plot_path": args.plot_path,
     }
 
