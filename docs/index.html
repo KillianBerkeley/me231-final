@@ -257,6 +257,7 @@
     <li><a href="#models">Models</a></li>
     <li><a href="#comparison">Comparison</a></li>
     <li><a href="#ensemble">Ensemble</a></li>
+    <li><a href="#dashboard">Dashboard</a></li>
     <li><a href="#findings">Findings</a></li>
   </ul>
 </nav>
@@ -272,7 +273,7 @@
   </p>
   <div class="hero-stats">
     <div class="stat-pill"><strong>150,000</strong> employee records</div>
-    <div class="stat-pill"><strong>25</strong> input features</div>
+    <div class="stat-pill"><strong>23</strong> input features</div>
     <div class="stat-pill"><strong>5</strong> model types tested</div>
     <div class="stat-pill"><strong>93.4%</strong> best accuracy (SVM)</div>
     <div class="stat-pill"><strong>R² 73.9%</strong> regression score</div>
@@ -349,7 +350,7 @@
   <div class="container">
     <h2><span class="icon">🗂</span> Dataset</h2>
     <p class="section-sub">
-      We use the <em>Employee Mental Health and Burnout Dataset</em> from Kaggle, containing 150,001 rows and 25 columns.
+      We use the <em>Employee Mental Health and Burnout Dataset</em> from Kaggle, containing 150,000 rows and 25 columns.
       Each row represents one employee and their self-reported or measured attributes.
     </p>
 
@@ -884,8 +885,10 @@
       <strong>Note on the ~1–2% accuracy range:</strong> The three supervised classifiers are all within about 1.6
       percentage points of each other (91.78%–93.40%). This narrow range suggests the dataset is not particularly
       difficult for any of these approaches — all three are close to ceiling. The more meaningful differentiation
-      appears in <strong>macro F1</strong>, where you can see which model handles the minority classes (Low and High)
-      better.
+      appears in <strong>macro F1</strong>, which treats each burnout class equally regardless of size — penalizing
+      a model that performs well on Moderate but poorly on Low or High. Macro F1 per model is visible in the
+      <a href="#dashboard" style="color:var(--accent);">Full Comparison Dashboard</a> below, where each confusion
+      matrix panel shows both weighted and macro F1.
     </div>
   </div>
 </section>
@@ -915,10 +918,10 @@
         <h3>Equal vs. weighted voting</h3>
         <p style="font-size:.875rem;color:var(--muted);line-height:1.7;margin-top:.5rem;">
           In <strong style="color:var(--text);">equal-weight</strong> voting each model gets 1 vote.
-          In <strong style="color:var(--text);">weighted voting</strong>, each model's vote carries
-          a weight proportional to its test-set macro F1 score — better models have louder voices.
-          In practice, both strategies produced identical results here because the weight differences were
-          small enough to not change any majority decisions.
+          In <strong style="color:var(--text);">weighted voting</strong>, each model's vote is scaled
+          by its macro F1 on the test set. In this run all four models produced nearly identical macro F1
+          scores, so the normalized weights came out at 0.25 each — making both strategies equivalent.
+          Both ensembles produced identical predictions (93.29% accuracy, macro F1 59.45%).
         </p>
       </div>
     </div>
@@ -955,7 +958,7 @@
         </div>
         <div class="metric-row">
           <span class="metric-label">Weights</span>
-          <span class="metric-value" style="font-size:.8rem;">0.25 / 0.25 / 0.25 / 0.25 (equal at default)</span>
+          <span class="metric-value" style="font-size:.8rem;">0.25 / 0.25 / 0.25 / 0.25 (models had equal macro F1)</span>
         </div>
       </div>
     </div>
